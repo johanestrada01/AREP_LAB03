@@ -13,6 +13,7 @@ public class MicroServer {
         loadComponents(args);
         System.out.println(simulateRequests("/greeting"));
         System.out.println(simulateRequests("/pi"));
+        System.out.println(simulateRequests("/e"));
     }
 
     private static String simulateRequests(String route) throws InvocationTargetException, IllegalAccessException {
@@ -25,17 +26,18 @@ public class MicroServer {
     }
 
     private static void loadComponents(String[] args) throws ClassNotFoundException {
-        Class c = Class.forName(args[0]);
-        if(!c.isAnnotationPresent(RestController.class)){
-            System.exit(0);
-        }
-        for(Method method : c.getDeclaredMethods()){
-            if(method.isAnnotationPresent(GetMapping.class)) {
-                GetMapping a = method.getAnnotation(GetMapping.class);
-                services.put(a.value(), method);
+        for(int i = 0; i < args.length; i++){
+            Class c = Class.forName(args[i]);
+            if(!c.isAnnotationPresent(RestController.class)){
+                System.exit(0);
+            }
+            for(Method method : c.getDeclaredMethods()){
+                if(method.isAnnotationPresent(GetMapping.class)) {
+                    GetMapping a = method.getAnnotation(GetMapping.class);
+                    services.put(a.value(), method);
+                }
             }
         }
-
     }
 }
  //java -cp target/classes Lab03.MicroServer Lab03.GreetingController
